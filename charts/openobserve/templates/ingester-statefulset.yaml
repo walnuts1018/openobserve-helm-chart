@@ -116,9 +116,11 @@ spec:
             {{- with .Values.extraEnv }}
             {{- toYaml . |  nindent 12 }}
             {{- end }}
+          {{- if .Values.ingester.persistence.enabled }}  
           volumeMounts:
             - name: data
               mountPath: /data
+          {{- end }}
       {{- with .Values.nodeSelector.ingester }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -131,6 +133,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  {{- if .Values.ingester.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: data
@@ -143,3 +146,4 @@ spec:
       resources:
         requests:
           storage: {{ .Values.ingester.persistence.size | quote }}
+  {{- end }}
